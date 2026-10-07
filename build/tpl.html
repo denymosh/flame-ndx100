@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>纳指100 市盈率</title>
+<style>
+:root{--bg:#fff;--fg:#222;--muted:#777;--grid:#ddd;--fwd:#2f7f93;--ttm:#b5d9e2;--line:#1d5f6e;--ttmtxt:#333}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#15181b;--fg:#e8e8e8;--muted:#9aa;--grid:#2c3236;--fwd:#3a95ab;--ttm:#3c5d66;--line:#8fd0df;--ttmtxt:#cfdde0}}
+:root[data-theme="dark"]{--bg:#15181b;--fg:#e8e8e8;--muted:#9aa;--grid:#2c3236;--fwd:#3a95ab;--ttm:#3c5d66;--line:#8fd0df;--ttmtxt:#cfdde0}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+.wrap{max-width:900px;margin:0 auto;padding:20px 16px 32px}
+h1{font-size:20px;margin:0 0 4px}
+.sub{color:var(--muted);font-size:13px;margin-bottom:28px;line-height:1.6}
+.legend{display:flex;flex-direction:column;align-items:flex-end;gap:3px;position:relative;z-index:2;margin-bottom:-84px}
+.legend .lg{display:flex;align-items:baseline;justify-content:flex-end;gap:6px;width:270px;padding:3px 8px;box-sizing:border-box;font-size:20px;line-height:1.2}
+.legend .lg small{font-size:14px}
+.legend .lg.t{background:var(--ttm);color:#1d4a55}
+.legend .lg.f{background:var(--fwd);color:#fff}
+.legend .ix{font-size:12px;color:var(--muted)}
+@media (max-width:640px){.legend{margin-bottom:8px}.legend .lg{width:220px;font-size:16px}.legend .lg small{font-size:12px}}
+.legend .ix i{display:inline-block;width:24px;border-top:2px dashed var(--line);vertical-align:3px;margin-right:6px}
+.chart{position:relative}
+.head{position:relative;height:30px;margin-left:var(--lab);font-size:13px;color:var(--muted)}
+.head span{position:absolute;bottom:4px;white-space:nowrap}
+.head b{font-size:20px;color:var(--fg);font-weight:600}
+.row{display:grid;grid-template-columns:var(--lab) minmax(0,1fr);align-items:center;height:40.4px}
+.lab{text-align:right;padding-right:10px;font-weight:700;font-size:15px;line-height:1.1}
+.lab small{display:block;margin-top:3px;font-weight:400;font-size:11px;color:var(--muted)}
+.plot{position:relative;height:100%;border-left:1px solid var(--grid)}
+.bar{position:absolute;top:7.2px;bottom:7.2px;left:0}
+.ttm{background:var(--ttm)}
+.fwd{background:var(--fwd);color:#fff;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:flex-end;padding-right:4px;box-sizing:border-box}
+.fwd.out{justify-content:flex-start}
+/*.tick*/.x{position:absolute;top:3px;bottom:3px;width:3px;background:var(--ttmtxt)}
+.logo{flex:none;margin-left:8px;vertical-align:middle;background:#fff;border-radius:4px;padding:2px 4px}
+.logo.dk{background:#1c1c1c}
+.ttm.in{color:#1d4a55;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:flex-end;padding-right:4px;box-sizing:border-box}
+.val{display:flex;align-items:center;position:absolute;top:50%;transform:translateY(-50%);font-size:12px;font-weight:600;color:var(--ttmtxt);white-space:nowrap}
+.brk{position:absolute;top:2px;bottom:2px;width:8px;background:var(--bg);transform:skewX(-20deg)}
+.vline{position:absolute;top:0;bottom:0;border-left:1.5px dashed var(--line);pointer-events:none}
+.grid{position:absolute;top:0;bottom:0;border-left:1px dashed var(--grid);pointer-events:none}
+.w{color:var(--muted);font-weight:400;font-size:11px;margin-left:6px}
+.na{display:flex;align-items:center;position:absolute;top:50%;transform:translateY(-50%);left:6px;font-size:12px;color:var(--muted)}
+.note{font-size:12px;color:var(--muted);line-height:1.7;margin-top:14px}
+.row.other .lab{color:var(--muted)}
+.tk{font-weight:600}
+.kb{color:var(--fwd);font-weight:600;text-decoration:none}
+.kb:hover{text-decoration:underline;text-underline-offset:2px}
+.rk{font-weight:400;font-size:12px;color:var(--muted);margin-right:5px}
+</style></head><body><div class="wrap">
+<h1>纳指100 成分股市盈率（按 QQQ 持仓权重排序）</h1>
+<div class="sub">持仓排序：QQQ 持仓明细，更新 2026/10/06 · 市盈率：finviz，2026/10/06 收盘后取数</div>
+<div class="legend"><div class="lg t">滚动市盈率<small>2026/10/06</small></div><div class="lg f">前瞻市盈率<small>2026/10/06</small></div><div class="ix"><i></i>纳指100 整体</div></div>
+<div class="chart" id="c"></div>
+<div class="note" id="n"></div>
+</div>
+<script>
+const D=__DATA__;
+const LOGO=__LOGO__;
+const CAP=200; // 横轴上限，超出的柱截断并标注实际值
+const c=document.getElementById('c');
+c.style.setProperty('--lab','135px');
+const x=v=>Math.min(v,CAP)/CAP*76; // 右侧留 24% 给截断柱的数值与 logo
+let h=`<div class="head"><span style="left:calc(${x(D.idx_fpe)}% - 4px);transform:translateX(-100%)">纳指100前瞻：<b>${D.idx_fpe}</b></span><span style="left:calc(${x(D.idx_pe)}% + 4px)">纳指100滚动：<b>${D.idx_pe}</b></span></div>`;
+let body='';
+D.rows.forEach((r,i)=>{
+  const pe=r.pe,f=r.fpe;let p='';
+  for(const g of [50,100,150]) p+=`<div class="grid" style="left:${x(g)}%"></div>`;
+  const L=LOGO[r.tk]?`<img class="logo" src="${LOGO[r.tk].src}" style="width:${LOGO[r.tk].w}px;height:${LOGO[r.tk].h}px" alt="${r.tk}">`:'';
+  const inv=pe!=null&&f!=null&&f>pe; // 前瞻高于滚动：浅色柱压在深色柱上，两段长度都可见
+  const ttm=pe!=null?`<div class="bar ttm${inv?' in':''}" style="width:${x(pe)}%">${inv?pe.toFixed(1):''}</div>`:'';
+  let fwd='';
+  if(f!=null){const out=x(f)<4.5||inv;fwd=`<div class="bar fwd" style="width:${x(f)}%">${out?'':f.toFixed(1)}</div>`;
+    if(out&&!inv) fwd+=`<span class="val" style="left:calc(${x(f)}% + 4px);color:var(--fwd)">${f.toFixed(1)}</span>`;}
+  p+= inv?fwd+ttm:ttm+fwd;
+  if(inv) p+=`<span class="val" style="left:calc(${x(f)}% + 6px)"><span style="color:var(--fwd)">${f.toFixed(1)} 前瞻</span>${L}</span>`;
+  else if(pe!=null){
+    const big=pe>CAP;
+    if(big) p+=`<div class="brk" style="left:calc(${x(CAP)}% - 26px)"></div><span class="val" style="left:calc(${x(CAP)}% + 6px)">${pe.toFixed(1)}${L}</span>`;
+    else p+=`<span class="val" style="left:calc(${Math.max(x(pe),f!=null?x(f):0)}% + 6px)">${pe.toFixed(1)}${L}</span>`;
+  }
+  else if(f==null) p+=`<span class="na">无市盈率数据（亏损或未披露）${L}</span>`;
+  else p+=`<span class="val" style="left:calc(${x(f)}% + 6px);color:var(--muted)">滚动：亏损${L}</span>`;
+  body+=`<div class="row ${r.name==='其他'?'other':''}"><div class="lab">${r.name}<small>${r.href?`<a class="kb" href="${r.href}" target="_blank" title="打开研报知识库 ${r.tk} 页">${r.tk}</a>`:`<span class="tk">${r.tk}</span>`}<span class="w">${r.w}%</span></small></div><div class="plot">${p}</div></div>`;
+});
+c.innerHTML=h+`<div style="position:relative">${body}<div style="position:absolute;top:0;bottom:0;left:135px;right:0;pointer-events:none"><div class="vline" style="left:${x(D.idx_fpe)}%"></div><div class="vline" style="left:${x(D.idx_pe)}%"></div></div></div>`;
+document.getElementById('n').innerHTML=`说明：<br>1. 横轴上限 ${CAP} 倍。超出部分截断（斜断口），实际值标在柱外右侧。<br>2. 前瞻市盈率高于滚动市盈率时（谷歌、亚马逊），浅色柱画在深色柱上方：浅色段是滚动值，露出的深色段末端是前瞻值。<br>3. 纳指100 整体市盈率 = 成分股总市值 ÷ 总盈利（各股盈利 = 市值 ÷ 市盈率），按 finviz 列出的 ${D.n} 只成分计算，市值加权，非 QQQ 权重。亏损或无数据的成分不计入：滚动口径剔除 ${D.ex_pe} 只，前瞻口径剔除 ${D.ex_fpe} 只（含 SpaceX）。<br>4. 「其他」= 前 33 名以外成分的同口径汇总，权重 = 100% − 前 33 名权重之和。${D.rows.some(r=>r.href)?'<br>5. 蓝绿色的代码可点击，打开研报知识库中该标的的页面（谷歌 A / C 共用一页）。':''}<br>${D.rows.some(r=>r.href)?6:5}. CrowdStrike 滚动市盈率 7,426 倍、Palo Alto 791 倍，因 TTM 盈利接近零，不代表估值水平。`;
+</script></body></html>
