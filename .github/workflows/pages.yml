@@ -23,8 +23,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
+      # 只发布页面本身；index.html 已内嵌 logo 和数据，build/、data/、logos/ 不上线
+      - name: Stage site
+        run: |
+          mkdir _site
+          cp index.html _site/
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: _site
       - id: deployment
         uses: actions/deploy-pages@v4
