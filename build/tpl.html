@@ -83,7 +83,8 @@ const LOGO=__LOGO__;
 const CAP=200; // 横轴上限，超出的柱截断并标注实际值
 const c=document.getElementById('c');
 c.style.setProperty('--lab','135px');
-const x=v=>Math.min(v,CAP)/CAP*76; // 右侧留 24% 给截断柱的数值与 logo
+const K=innerWidth<=760?62:76; // 手机上给截断柱右侧的数值和 logo 多留些空间
+const x=v=>Math.min(v,CAP)/CAP*K; // 右侧留 24% 给截断柱的数值与 logo
 let h=`<div class="head"><span style="left:calc(${x(D.idx_fpe)}% - 4px);transform:translateX(-100%)">纳指100前瞻：<b>${D.idx_fpe}</b></span><span style="left:calc(${x(D.idx_pe)}% + 4px)">纳指100滚动：<b>${D.idx_pe}</b></span></div>`;
 let body='';
 D.rows.forEach((r,i)=>{
@@ -106,6 +107,22 @@ D.rows.forEach((r,i)=>{
   else p+=`<span class="val" style="left:calc(${x(f)}% + 6px);color:var(--muted)">滚动：亏损${L}</span>`;
   body+=`<div class="row ${r.name==='其他'?'other':''}"><div class="lab">${r.name}<small>${r.href?`<a class="kb" href="${r.href}" target="_blank" title="打开研报知识库 ${r.tk} 页">${r.tk}</a>`:`<span class="tk">${r.tk}</span>`}<span class="w">${r.w}%</span></small></div><div class="plot">${p}</div></div>`;
 });
-c.innerHTML=h+`<div style="position:relative">${body}<div style="position:absolute;top:0;bottom:0;left:135px;right:0;pointer-events:none"><div class="vline" style="left:${x(D.idx_fpe)}%"></div><div class="vline" style="left:${x(D.idx_pe)}%"></div></div></div>`;
+c.innerHTML=h+`<div style="position:relative">${body}<div style="position:absolute;top:0;bottom:0;left:var(--lab);right:0;pointer-events:none"><div class="vline" style="left:${x(D.idx_fpe)}%"></div><div class="vline" style="left:${x(D.idx_pe)}%"></div></div></div>`;
+// 标签列宽与图的水平位置：
+// 桌面：整张图左移，使「美光科技」的「美」与标题 NDX100 的 N 左对齐（更长的标签如 CrowdStrike 会略微伸出到左侧）；
+// 手机：标签列收窄到最长标签的宽度，给截断柱右侧的数值和 logo 腾出空间，避免横向溢出。
+function fit(){
+  const tw=n=>{const r=document.createRange();r.selectNodeContents(n);return r.getBoundingClientRect().width};
+  const labs=[...c.querySelectorAll('.lab')];
+  if(innerWidth<=760){
+    const w=Math.max(...labs.flatMap(l=>[tw(l.firstChild),tw(l.querySelector('small'))]));
+    c.style.setProperty('--lab',Math.ceil(w+10)+'px');c.style.marginLeft='';
+  }else{
+    c.style.setProperty('--lab','135px');
+    const mu=labs.find(l=>l.firstChild.textContent==='美光科技');
+    c.style.marginLeft=mu?-(135-10-tw(mu.firstChild))+'px':'';
+  }
+}
+fit();addEventListener('resize',fit);document.fonts&&document.fonts.ready.then(fit);
 document.getElementById('n').innerHTML=`说明：<br>1. 横轴上限 ${CAP} 倍。超出部分截断（斜断口），实际值标在柱外右侧。<br>2. 前瞻市盈率高于滚动市盈率时（谷歌、亚马逊），浅色柱画在深色柱上方：浅色段是滚动值，露出的深色段末端是前瞻值。<br>3. 纳指100 整体市盈率 = 成分股总市值 ÷ 总盈利（各股盈利 = 市值 ÷ 市盈率），按 finviz 列出的 ${D.n} 只成分计算，市值加权，非 QQQ 权重。亏损或无数据的成分不计入：滚动口径剔除 ${D.ex_pe} 只，前瞻口径剔除 ${D.ex_fpe} 只（含 SpaceX）。<br>4. 「其他」= 前 33 名以外成分的同口径汇总，权重 = 100% − 前 33 名权重之和。${D.rows.some(r=>r.href)?'<br>5. 蓝绿色的代码可点击，打开研报知识库中该标的的页面（谷歌 A / C 共用一页）。':''}<br>${D.rows.some(r=>r.href)?6:5}. CrowdStrike 滚动市盈率 7,426 倍、Palo Alto 791 倍，因 TTM 盈利接近零，不代表估值水平。`;
 </script></body></html>
