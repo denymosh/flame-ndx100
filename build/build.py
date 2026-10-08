@@ -1,4 +1,4 @@
-import csv, json, os, re
+import base64, csv, json, os, re
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 P = lambda *a: os.path.join(ROOT, *a)
 
@@ -10,6 +10,8 @@ assert not dup, f'同一月份只能有一期：{dup}'
 
 tpl = open(P('build', 'tpl.html'), encoding='utf-8').read()
 logos = open(P('build', 'logos.json')).read()
+# 标题字体 Zen Dots 内嵌为 data URI，页面仍是单个自包含文件
+font = base64.b64encode(open(P('build', 'zendots.woff2'), 'rb').read()).decode()
 # 研报知识库链接（仅本机）：设 KB_VIEWS=<views 目录> 时，为已有页面的标的加链接；谷歌 C 与谷歌 A 共用 GOOGL 页
 VIEWS = os.environ.get('KB_VIEWS', '')
 
@@ -50,10 +52,10 @@ def build(period):
 def nav(cur, prefix):
     # 左侧往期列表；prefix 是从当前页到站点根的相对路径（根页面为 ''，存档页为 '../'）
     items = ''.join(f'<li><a href="{prefix}{d[:7]}/"{" aria-current=\"page\"" if d == cur else ""}>{d.replace("-", "/")}</a></li>' for d in periods)
-    return f'<nav class="hist"><div class="ht">往期</div><ul>{items}</ul></nav>'
+    return f'<nav class="hist"><div class="ht">ARCHIVE</div><ul>{items}</ul></nav>'
 
 def render(period, data, prefix):
-    return (tpl.replace('__DATA__', json.dumps(data, ensure_ascii=False)).replace('__LOGO__', logos)
+    return (tpl.replace('__DATA__', json.dumps(data, ensure_ascii=False)).replace('__LOGO__', logos).replace('__FONT__', font)
             .replace('__DATE__', period.replace('-', '/')).replace('__NAV__', nav(period, prefix)))
 
 # 每期存档 → YYYY-MM/index.html；最新一期另写到根目录 index.html

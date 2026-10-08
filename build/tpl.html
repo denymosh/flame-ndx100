@@ -1,26 +1,40 @@
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>纳指100 市盈率</title>
+<title>NDX100 P/E · SICAPER</title>
+<meta name="theme-color" content="#05080a">
 <style>
-:root{--bg:#fff;--fg:#222;--muted:#777;--grid:#ddd;--fwd:#2f7f93;--ttm:#b5d9e2;--line:#1d5f6e;--ttmtxt:#333}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#15181b;--fg:#e8e8e8;--muted:#9aa;--grid:#2c3236;--fwd:#3a95ab;--ttm:#3c5d66;--line:#8fd0df;--ttmtxt:#cfdde0}}
-:root[data-theme="dark"]{--bg:#15181b;--fg:#e8e8e8;--muted:#9aa;--grid:#2c3236;--fwd:#3a95ab;--ttm:#3c5d66;--line:#8fd0df;--ttmtxt:#cfdde0}
-body{margin:0;background:var(--bg);color:var(--fg);font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+@font-face{font-family:"Zen Dots";src:url(data:font/woff2;base64,__FONT__) format("woff2");font-display:swap}
+/* 与 sicaper.net 导航页一致的终端风格：深色网格 + 扫描线 + 青色 */
+:root{--bg:#05080a;--fg:#c8f7ff;--muted:#5d7f87;--grid:rgba(46,242,255,.16);--fwd:#16788a;--ttm:#86d3df;--line:#2ef2ff;--ttmtxt:#d4eef2;--acc:#2ef2ff;--ink:#021418;--fwdtxt:#3cc8dc;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,"PingFang SC","Microsoft YaHei",monospace;--display:"Zen Dots","PingFang SC","Microsoft YaHei",sans-serif}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  background-image:linear-gradient(rgba(46,242,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(46,242,255,.07) 1px,transparent 1px);background-size:40px 40px}
+body:after{content:"";position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.22) 0 1px,transparent 1px 3px)}
+a{color:inherit}
+.boot{font-family:var(--mono);color:var(--muted);font-size:13px;line-height:1.9}
+.boot a{color:var(--acc);text-decoration:none}.boot a:hover{text-shadow:0 0 8px rgba(46,242,255,.8)}
+.boot b{color:var(--acc);font-weight:400}
+.ttl{font-size:17px;font-weight:600;color:#fff;margin:2px 0 4px}
+footer{margin-top:40px;font-family:var(--display);font-size:10px;letter-spacing:.2em;color:var(--muted)}
 .page{display:flex;justify-content:center}
 .wrap{flex:0 1 900px;min-width:0;max-width:900px;padding:20px 16px 32px;box-sizing:border-box}
-.hist{flex:none;width:104px;position:sticky;top:0;align-self:flex-start;padding:26px 0 0 16px;font-size:13px}
-.hist .ht{color:var(--muted);font-size:12px;margin-bottom:6px}
+.hist{flex:none;width:112px;margin:0 128px 0 -64px;position:sticky;top:40px;align-self:flex-start;padding:200px 0 0 16px;font-size:13px;font-family:var(--mono)}
+.hist .ht{font-family:var(--display);color:var(--muted);font-size:10px;letter-spacing:.2em;margin-bottom:8px}
 .hist ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
-.hist a{color:var(--fwd);text-decoration:none;white-space:nowrap}
-.hist a:hover{text-decoration:underline;text-underline-offset:2px}
-.hist a[aria-current]{color:var(--fg);font-weight:600}
-@media (max-width:760px){.page{flex-direction:column}.hist{position:static;width:auto;padding:12px 16px 0;display:flex;gap:10px;align-items:baseline}.hist .ht{margin:0}.hist ul{flex-direction:row;flex-wrap:wrap;gap:4px 12px}}
-h1{font-size:20px;margin:0 0 4px}
-.sub{color:var(--muted);font-size:13px;margin-bottom:28px;line-height:1.6}
+.hist a{color:var(--acc);text-decoration:none;white-space:nowrap}
+.hist a:hover{text-shadow:0 0 8px rgba(46,242,255,.8)}
+.hist a[aria-current]{color:#fff}.hist a[aria-current]:before{content:"▸ ";color:var(--acc)}
+@media (max-width:1240px){.hist{margin-left:0;margin-right:64px}}
+@media (max-width:760px){.page{flex-direction:column}.hist{position:static;width:auto;margin-right:0;padding:12px 16px 0;display:flex;gap:10px;align-items:baseline}.hist .ht{margin:0}.hist ul{flex-direction:row;flex-wrap:wrap;gap:4px 12px}}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(30px,6vw,46px);letter-spacing:.05em;margin:10px 0 6px;color:#fff;text-shadow:0 0 18px rgba(46,242,255,.6)}
+h1 i{display:inline-block;width:.5em;height:.85em;background:var(--acc);vertical-align:-.06em;margin-left:.12em;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+@media (prefers-reduced-motion:reduce){h1 i{animation:none}}
+.sub{font-family:var(--mono);color:var(--muted);font-size:12px;margin-bottom:28px;line-height:1.7}
 .legend{display:flex;flex-direction:column;align-items:flex-end;gap:3px;position:relative;z-index:2;margin-bottom:-84px}
 .legend .lg{display:flex;align-items:baseline;justify-content:flex-end;gap:6px;width:270px;padding:3px 8px;box-sizing:border-box;font-size:20px;line-height:1.2}
 .legend .lg small{font-size:14px}
-.legend .lg.t{background:var(--ttm);color:#1d4a55}
+.legend .lg.t{background:var(--ttm);color:var(--ink)}
 .legend .lg.f{background:var(--fwd);color:#fff}
 .legend .ix{font-size:12px;color:var(--muted)}
 @media (max-width:640px){.legend{margin-bottom:8px}.legend .lg{width:220px;font-size:16px}.legend .lg small{font-size:12px}}
@@ -28,7 +42,7 @@ h1{font-size:20px;margin:0 0 4px}
 .chart{position:relative}
 .head{position:relative;height:30px;margin-left:var(--lab);font-size:13px;color:var(--muted)}
 .head span{position:absolute;bottom:4px;white-space:nowrap}
-.head b{font-size:20px;color:var(--fg);font-weight:600}
+.head b{font-family:var(--display);font-size:20px;color:#fff;font-weight:400;text-shadow:0 0 10px rgba(46,242,255,.5)}
 .row{display:grid;grid-template-columns:var(--lab) minmax(0,1fr);align-items:center;height:40.4px}
 .lab{text-align:right;padding-right:10px;font-weight:700;font-size:15px;line-height:1.1}
 .lab small{display:block;margin-top:3px;font-weight:400;font-size:11px;color:var(--muted)}
@@ -40,7 +54,7 @@ h1{font-size:20px;margin:0 0 4px}
 /*.tick*/.x{position:absolute;top:3px;bottom:3px;width:3px;background:var(--ttmtxt)}
 .logo{flex:none;margin-left:8px;vertical-align:middle;background:#fff;border-radius:4px;padding:2px 4px}
 .logo.dk{background:#1c1c1c}
-.ttm.in{color:#1d4a55;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:flex-end;padding-right:4px;box-sizing:border-box}
+.ttm.in{color:var(--ink);font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:flex-end;padding-right:4px;box-sizing:border-box}
 .val{display:flex;align-items:center;position:absolute;top:50%;transform:translateY(-50%);font-size:12px;font-weight:600;color:var(--ttmtxt);white-space:nowrap}
 .brk{position:absolute;top:2px;bottom:2px;width:8px;background:var(--bg);transform:skewX(-20deg)}
 .vline{position:absolute;top:0;bottom:0;border-left:1.5px dashed var(--line);pointer-events:none}
@@ -50,15 +64,18 @@ h1{font-size:20px;margin:0 0 4px}
 .note{font-size:12px;color:var(--muted);line-height:1.7;margin-top:14px}
 .row.other .lab{color:var(--muted)}
 .tk{font-weight:600}
-.kb{color:var(--fwd);font-weight:600;text-decoration:none}
+.kb{color:var(--acc);font-weight:600;text-decoration:none}
 .kb:hover{text-decoration:underline;text-underline-offset:2px}
 .rk{font-weight:400;font-size:12px;color:var(--muted);margin-right:5px}
 </style></head><body><div class="page">__NAV__<div class="wrap">
-<h1>纳指100 成分股市盈率（按 QQQ 持仓权重排序）</h1>
-<div class="sub">持仓排序：QQQ 持仓明细，更新 __DATE__ · 市盈率：finviz，__DATE__ 收盘后取数</div>
+<div class="boot">&gt; <a href="/">sicaper.net</a> / module_01 · <b>ndx100</b></div>
+<h1 aria-label="NDX100 P/E">NDX100 P/E<i aria-hidden="true"></i></h1>
+<div class="ttl">纳指100 成分股市盈率 · 按 QQQ 持仓权重排序</div>
+<div class="sub">// 持仓排序：QQQ 持仓明细，更新 __DATE__ · 市盈率：finviz，__DATE__ 收盘后取数</div>
 <div class="legend"><div class="lg t">滚动市盈率<small>__DATE__</small></div><div class="lg f">前瞻市盈率<small>__DATE__</small></div><div class="ix"><i></i>纳指100 整体</div></div>
 <div class="chart" id="c"></div>
 <div class="note" id="n"></div>
+<footer>© 2026 SICAPER.NET</footer>
 </div></div>
 <script>
 const D=__DATA__;
@@ -77,9 +94,9 @@ D.rows.forEach((r,i)=>{
   const ttm=pe!=null?`<div class="bar ttm${inv?' in':''}" style="width:${x(pe)}%">${inv?pe.toFixed(1):''}</div>`:'';
   let fwd='';
   if(f!=null){const out=x(f)<4.5||inv;fwd=`<div class="bar fwd" style="width:${x(f)}%">${out?'':f.toFixed(1)}</div>`;
-    if(out&&!inv) fwd+=`<span class="val" style="left:calc(${x(f)}% + 4px);color:var(--fwd)">${f.toFixed(1)}</span>`;}
+    if(out&&!inv) fwd+=`<span class="val" style="left:calc(${x(f)}% + 4px);color:var(--fwdtxt)">${f.toFixed(1)}</span>`;}
   p+= inv?fwd+ttm:ttm+fwd;
-  if(inv) p+=`<span class="val" style="left:calc(${x(f)}% + 6px)"><span style="color:var(--fwd)">${f.toFixed(1)} 前瞻</span>${L}</span>`;
+  if(inv) p+=`<span class="val" style="left:calc(${x(f)}% + 6px)"><span style="color:var(--fwdtxt)">${f.toFixed(1)} 前瞻</span>${L}</span>`;
   else if(pe!=null){
     const big=pe>CAP;
     if(big) p+=`<div class="brk" style="left:calc(${x(CAP)}% - 26px)"></div><span class="val" style="left:calc(${x(CAP)}% + 6px)">${pe.toFixed(1)}${L}</span>`;
