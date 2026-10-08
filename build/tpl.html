@@ -1,20 +1,25 @@
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>NDX100 P/E · SICAPER</title>
-<meta name="theme-color" content="#05080a">
+<meta name="theme-color" content="#f4f8fb">
 <style>
 @font-face{font-family:"Zen Dots";src:url(data:font/woff2;base64,__FONT__) format("woff2");font-display:swap}
-/* 与 sicaper.net 导航页一致的终端风格：深色网格 + 扫描线 + 青色 */
-:root{--bg:#05080a;--fg:#c8f7ff;--muted:#5d7f87;--grid:rgba(46,242,255,.16);--fwd:#16788a;--ttm:#86d3df;--line:#2ef2ff;--ttmtxt:#d4eef2;--acc:#2ef2ff;--ink:#021418;--fwdtxt:#3cc8dc;
+/* 与 sicaper.net 导航页一致的终端风格：白底 + 浅青网格 + 青色强调 + 缓慢下扫的扫描线 */
+:root{--bg:#f4f8fb;--fg:#0b2a35;--muted:#5c7885;--grid:rgba(8,110,135,.20);--fwd:#0e7490;--ttm:#a8e4ef;--line:#0a8fa9;--ttmtxt:#06303a;--acc:#0a7f99;--ink:#06303a;--fwdtxt:#0e7490;
   --mono:ui-monospace,"SF Mono",Menlo,Consolas,"PingFang SC","Microsoft YaHei",monospace;--display:"Zen Dots","PingFang SC","Microsoft YaHei",sans-serif}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;
-  background-image:linear-gradient(rgba(46,242,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(46,242,255,.07) 1px,transparent 1px);background-size:40px 40px}
-body:after{content:"";position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.22) 0 1px,transparent 1px 3px)}
+  background-image:linear-gradient(rgba(8,145,178,.09) 1px,transparent 1px),linear-gradient(90deg,rgba(8,145,178,.09) 1px,transparent 1px);background-size:40px 40px}
+/* 左上、右下两团淡青光晕 */
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(900px 420px at 18% -6%,rgba(8,145,178,.14),transparent 70%),radial-gradient(700px 360px at 100% 100%,rgba(8,145,178,.08),transparent 70%)}
+/* 每 9 秒从上到下扫过一次的细扫描线 */
+.sweep{position:fixed;left:0;right:0;top:0;height:2px;pointer-events:none;z-index:5;background:linear-gradient(90deg,transparent,rgba(8,145,178,.55),transparent);box-shadow:0 0 16px 2px rgba(8,145,178,.25);animation:sweep 9s linear infinite}
+@keyframes sweep{from{transform:translateY(-10px)}to{transform:translateY(100vh)}}
+@media (prefers-reduced-motion:reduce){.sweep{display:none}}
 a{color:inherit}
 .boot{font-family:var(--mono);color:var(--muted);font-size:13px;line-height:1.9}
-.boot a{color:var(--acc);text-decoration:none}.boot a:hover{text-shadow:0 0 8px rgba(46,242,255,.8)}
+.boot a{color:var(--acc);text-decoration:none}.boot a:hover{text-decoration:underline}
 .boot b{color:var(--acc);font-weight:400}
-.ttl{font-size:17px;font-weight:600;color:#fff;margin:2px 0 4px}
+.ttl{font-size:17px;font-weight:600;color:var(--ink);margin:2px 0 4px}
 footer{margin-top:40px;font-family:var(--display);font-size:10px;letter-spacing:.2em;color:var(--muted)}
 .page{display:flex;justify-content:center}
 .wrap{flex:0 1 900px;min-width:0;max-width:900px;padding:20px 16px 32px;box-sizing:border-box}
@@ -22,11 +27,11 @@ footer{margin-top:40px;font-family:var(--display);font-size:10px;letter-spacing:
 .hist .ht{font-family:var(--display);color:var(--muted);font-size:10px;letter-spacing:.2em;margin-bottom:8px}
 .hist ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
 .hist a{color:var(--acc);text-decoration:none;white-space:nowrap}
-.hist a:hover{text-shadow:0 0 8px rgba(46,242,255,.8)}
-.hist a[aria-current]{color:#fff}.hist a[aria-current]:before{content:"▸ ";color:var(--acc)}
+.hist a:hover{text-decoration:underline}
+.hist a[aria-current]{color:var(--ink)}.hist a[aria-current]:before{content:"▸ ";color:var(--acc)}
 @media (max-width:1240px){.hist{margin-left:0;margin-right:64px}}
 @media (max-width:760px){.page{flex-direction:column}.hist{position:static;width:auto;margin-right:0;padding:12px 16px 0;display:flex;gap:10px;align-items:baseline}.hist .ht{margin:0}.hist ul{flex-direction:row;flex-wrap:wrap;gap:4px 12px}}
-h1{font-family:var(--display);font-weight:400;font-size:clamp(30px,6vw,46px);letter-spacing:.05em;margin:10px 0 6px;color:#fff;text-shadow:0 0 18px rgba(46,242,255,.6)}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(30px,6vw,46px);letter-spacing:.05em;margin:10px 0 6px;color:var(--ink);text-shadow:3px 3px 0 rgba(8,145,178,.22)}
 h1 i{display:inline-block;width:.5em;height:.85em;background:var(--acc);vertical-align:-.06em;margin-left:.12em;animation:blink 1s steps(1) infinite}
 @keyframes blink{50%{opacity:0}}
 @media (prefers-reduced-motion:reduce){h1 i{animation:none}}
@@ -42,7 +47,7 @@ h1 i{display:inline-block;width:.5em;height:.85em;background:var(--acc);vertical
 .chart{position:relative}
 .head{position:relative;height:30px;margin-left:var(--lab);font-size:13px;color:var(--muted)}
 .head span{position:absolute;bottom:4px;white-space:nowrap}
-.head b{font-family:var(--display);font-size:20px;color:#fff;font-weight:400;text-shadow:0 0 10px rgba(46,242,255,.5)}
+.head b{font-family:var(--display);font-size:20px;color:var(--ink);font-weight:400}
 .row{display:grid;grid-template-columns:var(--lab) minmax(0,1fr);align-items:center;height:40.4px}
 .lab{text-align:right;padding-right:10px;font-weight:700;font-size:15px;line-height:1.1}
 .lab small{display:block;margin-top:3px;font-weight:400;font-size:11px;color:var(--muted)}
@@ -52,8 +57,7 @@ h1 i{display:inline-block;width:.5em;height:.85em;background:var(--acc);vertical
 .fwd{background:var(--fwd);color:#fff;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:flex-end;padding-right:4px;box-sizing:border-box}
 .fwd.out{justify-content:flex-start}
 /*.tick*/.x{position:absolute;top:3px;bottom:3px;width:3px;background:var(--ttmtxt)}
-.logo{flex:none;margin-left:8px;vertical-align:middle;background:#fff;border-radius:4px;padding:2px 4px}
-.logo.dk{background:#1c1c1c}
+.logo{flex:none;margin-left:8px;vertical-align:middle}
 .ttm.in{color:var(--ink);font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:flex-end;padding-right:4px;box-sizing:border-box}
 .val{display:flex;align-items:center;position:absolute;top:50%;transform:translateY(-50%);font-size:12px;font-weight:600;color:var(--ttmtxt);white-space:nowrap}
 .brk{position:absolute;top:2px;bottom:2px;width:8px;background:var(--bg);transform:skewX(-20deg)}
@@ -67,7 +71,7 @@ h1 i{display:inline-block;width:.5em;height:.85em;background:var(--acc);vertical
 .kb{color:var(--acc);font-weight:600;text-decoration:none}
 .kb:hover{text-decoration:underline;text-underline-offset:2px}
 .rk{font-weight:400;font-size:12px;color:var(--muted);margin-right:5px}
-</style></head><body><div class="page">__NAV__<div class="wrap">
+</style></head><body><div class="sweep" aria-hidden="true"></div><div class="page">__NAV__<div class="wrap">
 <div class="boot">&gt; <a href="/">sicaper.net</a> / module_01 · <b>ndx100</b></div>
 <h1 aria-label="NDX100 P/E">NDX100 P/E<i aria-hidden="true"></i></h1>
 <div class="ttl">纳指100 成分股市盈率 · 按 QQQ 持仓权重排序</div>
