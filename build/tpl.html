@@ -4,17 +4,13 @@
 <meta name="theme-color" content="#f4f8fb">
 <style>
 @font-face{font-family:"Zen Dots";src:url(data:font/woff2;base64,__FONT__) format("woff2");font-display:swap}
-/* 与 sicaper.net 导航页一致的终端风格：白底 + 浅青网格 + 青色强调 + 缓慢下扫的扫描线 */
+/* 与 sicaper.net 导航页一致的终端风格：白底 + 浅青网格 + 青色强调 */
 :root{--bg:#f4f8fb;--fg:#0b2a35;--muted:#5c7885;--grid:rgba(8,110,135,.20);--fwd:#0e7490;--ttm:#a8e4ef;--line:#0a8fa9;--ttmtxt:#06303a;--acc:#0a7f99;--ink:#06303a;--fwdtxt:#0e7490;
   --mono:ui-monospace,"SF Mono",Menlo,Consolas,"PingFang SC","Microsoft YaHei",monospace;--display:"Zen Dots","PingFang SC","Microsoft YaHei",sans-serif}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;
   background-image:linear-gradient(rgba(8,145,178,.09) 1px,transparent 1px),linear-gradient(90deg,rgba(8,145,178,.09) 1px,transparent 1px);background-size:40px 40px}
 /* 左上、右下两团淡青光晕 */
 body:before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(900px 420px at 18% -6%,rgba(8,145,178,.14),transparent 70%),radial-gradient(700px 360px at 100% 100%,rgba(8,145,178,.08),transparent 70%)}
-/* 每 9 秒从上到下扫过一次的细扫描线 */
-.sweep{position:fixed;left:0;right:0;top:0;height:2px;pointer-events:none;z-index:5;background:linear-gradient(90deg,transparent,rgba(8,145,178,.55),transparent);box-shadow:0 0 16px 2px rgba(8,145,178,.25);animation:sweep 9s linear infinite}
-@keyframes sweep{from{transform:translateY(-10px)}to{transform:translateY(100vh)}}
-@media (prefers-reduced-motion:reduce){.sweep{display:none}}
 a{color:inherit}
 .boot{font-family:var(--mono);color:var(--muted);font-size:13px;line-height:1.9}
 .boot a{color:var(--acc);text-decoration:none}.boot a:hover{text-decoration:underline}
@@ -71,7 +67,7 @@ h1 i{display:inline-block;width:.5em;height:.85em;background:var(--acc);vertical
 .kb{color:var(--acc);font-weight:600;text-decoration:none}
 .kb:hover{text-decoration:underline;text-underline-offset:2px}
 .rk{font-weight:400;font-size:12px;color:var(--muted);margin-right:5px}
-</style></head><body><div class="sweep" aria-hidden="true"></div><div class="page">__NAV__<div class="wrap">
+</style></head><body><div class="page">__NAV__<div class="wrap">
 <div class="boot">&gt; <a href="/">sicaper.net</a> / module_01 · <b>ndx100</b></div>
 <h1 aria-label="NDX100 P/E">NDX100 P/E<i aria-hidden="true"></i></h1>
 <div class="ttl">纳指100 成分股市盈率 · 按 QQQ 持仓权重排序</div>
