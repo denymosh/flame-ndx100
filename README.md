@@ -30,6 +30,7 @@ python build/build.py         # data/*/ + build/tpl.html + build/logos.json → 
   - `holdings.csv`：持仓排序与权重，每行 `名称,代码,权重%`。
   - `finviz.txt`：市盈率数据，每条格式为 `代码,市值,滚动PE,前瞻PE`。注意每个代码的首字母重复了一次，这是抓取时的产物，脚本读入时会去掉。
 - `build.py` 每次重建所有期数：每期写到 `YYYY-MM/index.html`，最新一期另写一份到根目录 `index.html`。左侧往期列表也随之更新，所以旧页面会列出后来新增的期数。
+- 页面样式与 sicaper.net 导航页一致（深色网格、青色、Zen Dots 标题）。字体文件 `build/zendots.woff2`（拉丁字符子集，SIL OFL 1.1，许可证见 `build/zendots-OFL.txt`）在生成时内嵌进页面，所以每期页面仍是单个自包含文件。
 - 设环境变量 `KB_VIEWS=<目录>` 时，会给该目录下已有 `{TICKER}.html` 的标的加本地链接。该功能仅供本机使用，公开版不加链接。
 
 ### 每月更新
