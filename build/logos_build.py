@@ -1,6 +1,6 @@
 """把 logos/ 下的原图裁掉四周留白，统一 24px 高、宽度按原比例，输出 {ticker: {src, w, h}}。"""
 import base64, glob, io, json, os
-from PIL import Image, ImageChops
+from PIL import Image, ImageChops, ImageDraw
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(ROOT)
@@ -12,8 +12,29 @@ SRC['SPCX'] = 'logos/SPCX_user.png'          # 用户提供的 SpaceX 字标
 SRC['SNDK'] = 'logos/SNDK_user.png'          # 用户提供的闪迪字标
 
 
+def drop_white_bg(im):
+    """图自带不透明白底时（四角为近白色），把与四角相连的近白色区域抠成透明，页面是白底，不需要色块。
+    只清理与四角连通的白，logo 内部的白（如微软四方块之间、博通圆里的白色波纹）若不与边缘相连则保留。"""
+    px = im.load()
+    W, H = im.size
+    if not all(px[x, y][3] > 250 and min(px[x, y][:3]) >= 240 for x, y in ((0, 0), (W - 1, 0), (0, H - 1), (W - 1, H - 1))):
+        return im
+    mark = (1, 2, 3)
+    rgb = Image.alpha_composite(Image.new('RGBA', im.size, 'white'), im).convert('RGB')
+    for xy in ((0, 0), (W - 1, 0), (0, H - 1), (W - 1, H - 1)):
+        if rgb.getpixel(xy) != mark:
+            ImageDraw.floodfill(rgb, xy, mark, thresh=28)
+    out = im.copy()
+    op, rp = out.load(), rgb.load()
+    for y in range(H):
+        for x in range(W):
+            if rp[x, y] == mark:
+                op[x, y] = (255, 255, 255, 0)
+    return out
+
+
 def crop(im):
-    im = im.convert('RGBA')
+    im = drop_white_bg(im.convert('RGBA'))
     bg = Image.new('RGBA', im.size, (255, 255, 255, 0))
     flat = Image.alpha_composite(Image.new('RGBA', im.size, 'white'), im).convert('L')
     ink = flat.point(lambda v: 255 if v < 235 else 0)          # 非白像素
