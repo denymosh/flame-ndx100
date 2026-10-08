@@ -6,7 +6,15 @@
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#15181b;--fg:#e8e8e8;--muted:#9aa;--grid:#2c3236;--fwd:#3a95ab;--ttm:#3c5d66;--line:#8fd0df;--ttmtxt:#cfdde0}}
 :root[data-theme="dark"]{--bg:#15181b;--fg:#e8e8e8;--muted:#9aa;--grid:#2c3236;--fwd:#3a95ab;--ttm:#3c5d66;--line:#8fd0df;--ttmtxt:#cfdde0}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif}
-.wrap{max-width:900px;margin:0 auto;padding:20px 16px 32px}
+.page{display:flex;justify-content:center}
+.wrap{flex:0 1 900px;min-width:0;max-width:900px;padding:20px 16px 32px;box-sizing:border-box}
+.hist{flex:none;width:104px;position:sticky;top:0;align-self:flex-start;padding:26px 0 0 16px;font-size:13px}
+.hist .ht{color:var(--muted);font-size:12px;margin-bottom:6px}
+.hist ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+.hist a{color:var(--fwd);text-decoration:none;white-space:nowrap}
+.hist a:hover{text-decoration:underline;text-underline-offset:2px}
+.hist a[aria-current]{color:var(--fg);font-weight:600}
+@media (max-width:760px){.page{flex-direction:column}.hist{position:static;width:auto;padding:12px 16px 0;display:flex;gap:10px;align-items:baseline}.hist .ht{margin:0}.hist ul{flex-direction:row;flex-wrap:wrap;gap:4px 12px}}
 h1{font-size:20px;margin:0 0 4px}
 .sub{color:var(--muted);font-size:13px;margin-bottom:28px;line-height:1.6}
 .legend{display:flex;flex-direction:column;align-items:flex-end;gap:3px;position:relative;z-index:2;margin-bottom:-84px}
@@ -45,13 +53,13 @@ h1{font-size:20px;margin:0 0 4px}
 .kb{color:var(--fwd);font-weight:600;text-decoration:none}
 .kb:hover{text-decoration:underline;text-underline-offset:2px}
 .rk{font-weight:400;font-size:12px;color:var(--muted);margin-right:5px}
-</style></head><body><div class="wrap">
+</style></head><body><div class="page">__NAV__<div class="wrap">
 <h1>纳指100 成分股市盈率（按 QQQ 持仓权重排序）</h1>
-<div class="sub">持仓排序：QQQ 持仓明细，更新 2026/10/06 · 市盈率：finviz，2026/10/06 收盘后取数</div>
-<div class="legend"><div class="lg t">滚动市盈率<small>2026/10/06</small></div><div class="lg f">前瞻市盈率<small>2026/10/06</small></div><div class="ix"><i></i>纳指100 整体</div></div>
+<div class="sub">持仓排序：QQQ 持仓明细，更新 __DATE__ · 市盈率：finviz，__DATE__ 收盘后取数</div>
+<div class="legend"><div class="lg t">滚动市盈率<small>__DATE__</small></div><div class="lg f">前瞻市盈率<small>__DATE__</small></div><div class="ix"><i></i>纳指100 整体</div></div>
 <div class="chart" id="c"></div>
 <div class="note" id="n"></div>
-</div>
+</div></div>
 <script>
 const D=__DATA__;
 const LOGO=__LOGO__;

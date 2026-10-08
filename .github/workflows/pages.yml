@@ -23,11 +23,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
-      # 只发布页面本身；index.html 已内嵌 logo 和数据，build/、data/、logos/ 不上线
+      # 只发布页面：最新一期 index.html 和各月存档 YYYY-MM/；页面已内嵌 logo 和数据，build/、data/、logos/ 不上线
       - name: Stage site
         run: |
           mkdir _site
           cp index.html _site/
+          cp -r [0-9][0-9][0-9][0-9]-[0-9][0-9] _site/
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
